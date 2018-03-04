@@ -6,7 +6,7 @@
 
 var url = require('url')
 
-var uri = 'mongodb://dimchris:882ltCEVKgPZ5UNn@itask-rest-server-shard-00-00-clebk.mongodb.net:27017,itask-rest-server-shard-00-01-clebk.mongodb.net:27017,itask-rest-server-shard-00-02-clebk.mongodb.net:27017/admin?replicaSet=itask-rest-server-shard-0&ssl=true';
+var uri = 'mongodb://dimchris:882ltCEVKgPZ5UNn@itask-rest-server-shard-00-00-clebk.mongodb.net:27017,itask-rest-server-shard-00-01-clebk.mongodb.net:27017,itask-rest-server-shard-00-02-clebk.mongodb.net:27017/itask?ssl=true&replicaSet=itask-rest-server-shard-0&authSource=admin';
 if (!uri) {
   throw new Error(
     '\033[31mYou need to provide the connection string. ' +

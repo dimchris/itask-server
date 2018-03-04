@@ -6,24 +6,23 @@ if (mongoose.connection.readyState === 0) {
 
 
 var newSchema = new Schema({
-  
-  'description': { type: String },
+  'description': { type: String, required: true, },
   'data': { type: String },
-  'contributor': { type: String },
+  'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });
 
-newSchema.pre('save', function(next){
+newSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-newSchema.pre('update', function() {
+newSchema.pre('update', function () {
   this.update({}, { $set: { updatedAt: Date.now() } });
 });
 
-newSchema.pre('findOneAndUpdate', function() {
+newSchema.pre('findOneAndUpdate', function () {
   this.update({}, { $set: { updatedAt: Date.now() } });
 });
 
