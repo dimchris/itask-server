@@ -13,7 +13,7 @@ var newSchema = new Schema({
     trim: true,
     lowercase: true,
     required: 'Email address is required',
-    // validate: [validator.isEmail, 'Email is invalid'] 
+    validate: [validator.isEmail, 'Email is invalid'] 
   },
   'fullname':{
     type: String, 
@@ -23,17 +23,6 @@ var newSchema = new Schema({
     type: String,
     trim:true,
     required:'Password is required',
-    // validate: [
-    //   {
-    //     validator: !validator.isEmpty,
-    //     msg: 'Password Empty'
-    //   },
-    //   {
-    //     validator: (pass) => {return pass.length>=8},
-    //     msg: 'Password too short'
-    //   }
-    // ]
-
    },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }

@@ -13,6 +13,11 @@ exports.user_signup = (req, res, next) => {
                     message: "Mail exists"
                 });
             } else {
+                if(!req.body.password && req.body.password.length<=8){
+                    return res.status(400).json({
+                        error: "Password at least 8 characters"
+                    })
+                }
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
                     if (err) {
                         return res.status(500).json({
