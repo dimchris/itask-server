@@ -4,16 +4,131 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
+exports.user_get_all = (req, res, next) => {
+    User.find()
+        .skip(parseInt(req.query.skip) || 0)
+        .limit(parseInt(req.query.limit) || 0)
+        .exec()
+        .then(users => {
+            return res.status(200).json(
+                {
+                    count: users.length,
+                    users: users.map(user => {
+                        return {
+                            id: user._id,
+                            email: user.email,
+                            fullname: user.fullname,
+                            role: user.role,
+                            status: user.status,
+                            request: {
+                                tupe: "GET",
+                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + user._id
+                            }
+
+                        }
+                    }),
+                }
+            );
+        })
+}
+
+exports.user_get = (req, res, next) => {
+    // TODO: Can anyone see details about this user ?
+    if (req.userData.userId != req.params.userId && userData.role !== 'admin') {
+        return res.status(401).json({
+            message: "Auth failed"
+        })
+    }
+    User.findOne({ _id: req.params.userId })
+        .select('email fullname role status')
+        .exec()
+        .then(
+            user => {
+                return res.status(200).json(
+                    user
+                )
+            }
+        )
+}
+
+exports.user_update = (req, res, next) => {
+    if (req.userData.userId != req.params.userId && userData.role !== 'admin') {
+        return res.status(401).json({
+            message: "Auth failed"
+        })
+    }
+    let params = {};
+    if (req.userData.role === 'admin') {
+        if (req.body.email) {
+            params.email = req.body.email
+        }
+        if (req.body.role) {
+            params.role = req.body.role
+        }
+        if (req.body.status) {
+            params.status = req.body.status
+        }
+        if (req.body.fullname) {
+            params.fullname = req.body.fullname
+        }
+    } else {
+        if (req.body.email) {
+            params.email = req.body.email
+        }
+    }
+
+    console.log(params);
+    
+
+    User.update({ _id: req.params.userId }, { "$set": params })
+        .exec()
+        .then((result) => {          
+            return res.status(200).json(
+                {
+                    message: "User updated",
+                    request: {
+                        type: "GET",
+                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' +  req.params.userId
+                    }
+                }
+            )
+        })
+        .catch((error) => {
+            return res.status(404).json(
+                {
+                    error
+                }
+            )
+        }
+        )
+};
+
+exports.user_delete = (req, res, next) => {
+    User.remove({ _id: req.params.userId })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "User deleted"
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+};
+
 exports.user_signup = (req, res, next) => {
     User.find({ email: req.body.email })
         .exec()
-        .then(user => {            
+        .then(user => {
             if (user.length >= 1) {
                 return res.status(409).json({
                     message: "Mail exists"
                 });
             } else {
-                if(!req.body.password && req.body.password.length<=8){
+                if (!req.body.password && req.body.password.length <= 8) {
                     return res.status(400).json({
                         error: "Password at least 8 characters"
                     })
@@ -56,6 +171,11 @@ exports.user_login = (req, res, next) => {
         .then(user => {
             if (user.length < 1) {
                 return res.status(401).json({
+                    message: "Pending approval."
+                });
+            }
+            if (user.status < 1) {
+                return res.status(401).json({
                     message: "Auth failed"
                 });
             }
@@ -68,8 +188,8 @@ exports.user_login = (req, res, next) => {
                 if (result) {
                     const token = jwt.sign(
                         {
-                            email: user[0].email,
-                            userId: user[0]._id
+                            userId: user[0]._id,
+                            role: user[0].role
                         },
                         process.env.JWT_KEY,
                         {
@@ -94,19 +214,5 @@ exports.user_login = (req, res, next) => {
         });
 };
 
-exports.user_delete = (req, res, next) => {
-    User.remove({ _id: req.params.userId })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: "User deleted"
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-};
+
 
