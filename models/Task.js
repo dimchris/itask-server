@@ -9,8 +9,10 @@ var newSchema = new Schema({
   
   'name': { type: String },
   'description': { type: String },
-  'cards': { type: String },
-  'author': { type: String },
+  'cards': [
+    { type: Stringchema.Types.ObjectId, ref:'Card' }
+  ],
+  'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });

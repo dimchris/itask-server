@@ -10,6 +10,7 @@ var newSchema = new Schema({
   'name': { type: String },
   'description': { type: String },
   'image': { type: String },
+  'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });

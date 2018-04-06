@@ -24,6 +24,10 @@ var newSchema = new Schema({
     trim:true,
     required:'Password is required',
    },
+   'role':{
+    type: String, 
+    default: 'user'
+  },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });
