@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
+const Image = require("../models/Image")
 
 exports.user_get_all = (req, res, next) => {
     User.find()
@@ -78,17 +79,17 @@ exports.user_update = (req, res, next) => {
     }
 
     console.log(params);
-    
+
 
     User.update({ _id: req.params.userId }, { "$set": params })
         .exec()
-        .then((result) => {          
+        .then((result) => {
             return res.status(200).json(
                 {
                     message: "User updated",
                     request: {
                         type: "GET",
-                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' +  req.params.userId
+                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.userId
                     }
                 }
             )
@@ -198,6 +199,7 @@ exports.user_login = (req, res, next) => {
                     );
                     return res.status(200).json({
                         message: "Auth successful",
+                        userId: user[0]._id,
                         token: token
                     });
                 }
@@ -212,7 +214,74 @@ exports.user_login = (req, res, next) => {
                 error: err
             });
         });
-};
+}
+//images
+exports.user_get_images = (req, res, next) => {
+    User.findById(req.params.userId)
+        .populate('images')
+        .exec()
+        .then(
+            (user) => {
+                return res.status(200).json(
+                    {
+                        count: user.images.length,
+                        images: user.images.map(
+                            image => {
+                                return {
+                                    name: image.name,
+                                    description: image.description,
+                                    request: {
+                                        type: 'GET',
+                                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + image._id
+                                    }
+                                }
+                            }
+                        )
+                    }
+                )
+            }
+        )
+        .catch(error => {
+            return res.status(403).json(
+                {
+                    error
+                }
+            );
+        })
+}
+
+exports.user_add_image = (req, res, next) => {
+    User.findById(req.userData.userId)
+        .then((user) => {
+            if (user.images.indexOf(req.body.imageId)<0) {
+                console.log(user.images);
+                user.images.push(req.body.imageId)
+                user.save().then((result) => {
+                    return res.status(200).json(
+                        {
+                            message: 'Image added',
+                            request: {
+                                type: 'GET',
+                                url: req.protocol + '://' + req.get('host') + 'images' + '/' + req.body.imageId
+                            }
+                        }
+                    )
+                }
+                )
+                .catch(error => {
+                    res.status(403).json({error})
+                })
+            }else{
+                res.status(200).json(                       {
+                    message: 'Image added',
+                    request: {
+                        type: 'GET',
+                        url: req.protocol + '://' + req.get('host') + 'images' + '/' + req.body.imageId
+                    }
+                })
+            }
+        })
+}
 
 
 
