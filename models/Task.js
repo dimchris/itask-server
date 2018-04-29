@@ -13,6 +13,8 @@ var newSchema = new Schema({
     { type: Schema.Types.ObjectId, ref:'Card' }
   ],
   'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
+  'published': {type: Number, default: '1'},
+  'status': {type:Number, default: '1'},
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });

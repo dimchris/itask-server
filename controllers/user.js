@@ -215,7 +215,10 @@ exports.user_login = (req, res, next) => {
             });
         });
 }
-//images
+
+/* 
+* User Images
+*/
 exports.user_get_images = (req, res, next) => {
     User.findById(req.params.userId)
         .populate('images')

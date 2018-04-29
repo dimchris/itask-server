@@ -8,6 +8,7 @@ var imageCtrl = require('../controllers/image')
 
 var image_add = imageCtrl.image_add
 var image_get = imageCtrl.image_get
+var image_delete = imageCtrl.image_delete
 var image_get_all = imageCtrl.image_get_all
 
 router.post('/', check_auth, image_add)

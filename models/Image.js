@@ -6,9 +6,13 @@ if (mongoose.connection.readyState === 0) {
 
 
 var newSchema = new Schema({
+  'name': { type: String, required: true, },
   'description': { type: String, required: true, },
   'data': { type: String },
+  'tags': [{type: String}],
   'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
+  'published': {type: Number, default: '1'},
+  'status': {type:Number, default: '1'},
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });

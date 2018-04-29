@@ -11,7 +11,8 @@ exports.image_add = (req, res, next) => {
         name: req.body.name,
         description: req.body.description,
         data: req.body.data,
-        contributor: req.userData.userId
+        contributor: req.userData.userId,
+        tags: req.body.tags
     })
     image.save().then((result) => {
         return res.status(200).json(
@@ -25,25 +26,30 @@ exports.image_add = (req, res, next) => {
             }
         )
     }
-    )
+    ).catch((error)=>res.status(403).json({error}))
 }
 
 exports.image_get = (req, res, next) => {
     Image.findById(req.params.imageId)
-        .populate('contributor')
         .exec()
         .then((image) => {
             return res.status(200).json(
                 {
-                    descriptiom: image.description,
+                    name: image.name,
+                    description: image.description,
                     data: image.data,
-                    contributor: image.contributor.fullname
+                    contributor: image.contributor
                 }
             );
         })
 }
 exports.image_get_all = (req, res, next) => {
-    Image.find(req.params.imageId)
+    let params = {};
+    if(req.userData.role === 'user'){
+        params.published = 1,
+        params.status = 1
+    }
+    Image.find(params)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
         .populate('contributor')
@@ -56,12 +62,38 @@ exports.image_get_all = (req, res, next) => {
                         return {
                             id: image._id,
                             description: image.description,
+                            contributor: {
+                                id: image .contributor.id,
+                                name: image.contributor.id
+                            },
                             url: {
-                                type: 'get',
+                                type: 'GET',
                                 url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + image._id
                             }
                         }
                     })
+                }
+            );
+        })
+}
+
+exports.image_update = (req, res, next) => {
+    // you must admin to change the image
+    if (userData.role !== 'admin') {
+        return res.status(401).json({
+            message: "Auth failed"
+        })
+    }
+    Image.findByIdAndUpdate(req.params.imageId, {$set: req.body})
+        .exec()
+        .then((image) => {
+            return res.status(200).json(
+                {
+                    message: "Image Updated",
+                    request: {
+                        type: 'GET',
+                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.imageId
+                    }
                 }
             );
         })

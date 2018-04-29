@@ -6,11 +6,12 @@ if (mongoose.connection.readyState === 0) {
 
 
 var newSchema = new Schema({
-  
-  'name': { type: String },
-  'description': { type: String },
+  'name': { type: String, required: true },
+  'description': { type: String, required: true },
   'image':{ type: Schema.Types.ObjectId, ref:'Image' },
-  'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
+  'published': {type: Number, default: '1'},
+  'status': {type:Number, default: '1'},
+  'contributor': { type: Schema.Types.ObjectId, ref: 'User', required: true },
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });
@@ -23,7 +24,7 @@ newSchema.pre('save', function(next){
 newSchema.pre('update', function() {
   this.update({}, { $set: { updatedAt: Date.now() } });
 });
-
+                                                                         
 newSchema.pre('findOneAndUpdate', function() {
   this.update({}, { $set: { updatedAt: Date.now() } });
 });
