@@ -6,8 +6,9 @@ const User = require("../models/User");
 const Card = require("../models/Card");
 
 exports.card_add = (req, res, next) => {
+    let _id =  new mongoose.Types.ObjectId(),
     card = new Card({
-        _id: new mongoose.Types.ObjectId(),
+        _id,
         name: req.body.name,
         description: req.body.description,
         image: req.body.image,
@@ -18,6 +19,7 @@ exports.card_add = (req, res, next) => {
         return res.status(200).json(
             {
                 message: 'Card added',
+                id: _id,
                 request: {
                     type: 'GET',
                     url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + card._id

@@ -8,7 +8,7 @@ if (mongoose.connection.readyState === 0) {
 var newSchema = new Schema({
   'name': { type: String, required: true, },
   'description': { type: String, required: true, },
-  'data': { type: String },
+  'data': { type: String, required: true},
   'tags': [{type: String}],
   'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
   'published': {type: Number, default: '1'},

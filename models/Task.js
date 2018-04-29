@@ -7,14 +7,15 @@ if (mongoose.connection.readyState === 0) {
 
 var newSchema = new Schema({
   
-  'name': { type: String },
-  'description': { type: String },
+  'name': { type: String, required: true},
+  'description': { type: String, required: true },
   'cards': [
     { type: Schema.Types.ObjectId, ref:'Card' }
   ],
-  'contributor': { type: Schema.Types.ObjectId, ref: 'User' },
+  'contributor': { type: Schema.Types.ObjectId, ref: 'User', required: true },
   'published': {type: Number, default: '1'},
   'status': {type:Number, default: '1'},
+  'tags': [{type: String}],
   'createdAt': { type: Date, default: Date.now },
   'updatedAt': { type: Date, default: Date.now }
 });
