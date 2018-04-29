@@ -13,7 +13,7 @@ var task_get_all = taskCtrl.task_get_all
 var task_update = taskCtrl.task_update
 
 router.post('/', check_auth, task_add)
-router.get('/', check_auth, task_get_all)
+router.get('/', task_get_all)
 router.get('/:taskId', task_get)
 router.put('/:taskId', check_auth, task_update)
 router.delete('/:taskId', check_auth, task_remove)
