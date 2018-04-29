@@ -75,6 +75,7 @@ exports.task_get_all = (req, res, next) => {
                     tasks: tasks.map((task) => {
                         return {
                             id: task._id,
+                            name: task.name,
                             description: task.description,
                             contributor: {
                                 id: task .contributor.id,
