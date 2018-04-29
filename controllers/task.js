@@ -32,25 +32,28 @@ exports.task_add = (req, res, next) => {
 
 exports.task_get = (req, res, next) => {
     Task.findById(req.params.taskId)
-        .populate('cards')
+        .select('_id name description contributor cards')
+        .populate({
+            path: 'cards',
+            select: '_id name description image',
+            populate: {
+                path: 'image',
+                select: 'name description data'
+            }
+        })
         .exec()
         .then((task) => {
-            let cardsRef = task.cards.map( card => {
-                return {
-                    id : card._id,
-                    request:{
-                        type: 'GET',
-                        url: req.protocol + '://' + req.get('host') + '/cards' + '/' + card._id
-                    }
-                }
-            })
+            // let cardsRef = task.cards.map( card => {
+            //     return {
+            //         id : card._id,
+            //         request:{
+            //             type: 'GET',
+            //             url: req.protocol + '://' + req.get('host') + '/cards' + '/' + card._id
+            //         }
+            //     }
+            // })
             return res.status(200).json(
-                {
-                    name: task.name,
-                    description: task.description,
-                    cards: cardsRef,
-                    contributor: task.contributor
-                }
+                task
             );
         })
 }
