@@ -21,18 +21,18 @@ exports.task_add = (req, res, next) => {
                 message: 'Task added',
                 request: {
                     type: 'GET',
-                    url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + task._id   
+                    url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + task._id
                 }
 
             }
         )
     }
-    ).catch((error)=>res.status(403).json({error}))
+    ).catch((error) => res.status(403).json({ error }))
 }
 
 exports.task_get = (req, res, next) => {
     Task.findById(req.params.taskId)
-        .select('_id name description contributor cards')
+        .select('_id name description age level image contributor cards')
         .populate({
             path: 'cards',
             select: '_id name description image',
@@ -41,6 +41,11 @@ exports.task_get = (req, res, next) => {
                 select: 'name description data'
             }
         })
+        .populate({
+            path: 'image',
+            select: '_id data'
+        })
+        .populate('contributor', '_id fullname')
         .exec()
         .then((task) => {
             // let cardsRef = task.cards.map( card => {
@@ -66,7 +71,12 @@ exports.task_get_all = (req, res, next) => {
     Task.find(params)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
+        .select('id name description age level image contributor')
         .populate('contributor')
+        .populate({
+            path: 'image',
+            select: '_id data'
+        })
         .exec()
         .then((tasks) => {
             return res.status(200).json(
@@ -77,9 +87,12 @@ exports.task_get_all = (req, res, next) => {
                             id: task._id,
                             name: task.name,
                             description: task.description,
+                            age: task.age,
+                            level: task.level,
+                            image: task.image,
                             contributor: {
-                                id: task .contributor.id,
-                                name: task.contributor.id
+                                id: task.contributor.id,
+                                name: task.contributor.fullname
                             },
                             url: {
                                 type: 'GET',
@@ -94,7 +107,7 @@ exports.task_get_all = (req, res, next) => {
 
 exports.task_update = (req, res, next) => {
 
-    Task.findByIdAndUpdate(req.params.taskId, {$set: req.body})
+    Task.findByIdAndUpdate(req.params.taskId, { $set: req.body })
         .exec()
         .then((task) => {
             return res.status(200).json(
@@ -109,11 +122,11 @@ exports.task_update = (req, res, next) => {
         })
 }
 
-exports.task_remove = (req, res, next ) => {
+exports.task_remove = (req, res, next) => {
     Task.findById(req.params.cardId)
         .exec()
-        .then((task)=>{
-            if(task.contributor == req.userData.userId){
+        .then((task) => {
+            if (task.contributor == req.userData.userId) {
                 Task.findByIdAndRemove(req.params.cardId)
                     .exec()
                     .then(() => {
@@ -128,5 +141,5 @@ exports.task_remove = (req, res, next ) => {
                     })
             }
         })
-        .catch(error => res.status(500).json({error}))
+        .catch(error => res.status(500).json({ error }))
 }

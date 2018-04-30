@@ -9,6 +9,9 @@ var newSchema = new Schema({
   
   'name': { type: String, required: true},
   'description': { type: String, required: true },
+  'age': {type: Number,  default: 0},
+  'level': {type: Number,  default: 0},
+  'image': { type: Schema.Types.ObjectId, ref: 'Image', default: '5ae6ba41f693203ee8018573'},
   'cards': [
     { type: Schema.Types.ObjectId, ref:'Card' }
   ],
