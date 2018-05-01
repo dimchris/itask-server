@@ -34,6 +34,7 @@ exports.card_add = (req, res, next) => {
 exports.card_get = (req, res, next) => {
     Card.findById(req.params.cardId)
         .populate('image')
+        .populate('contributor', '_id fullname')
         .exec()
         .then((card) => {
             return res.status(200).json(
@@ -47,12 +48,7 @@ exports.card_get = (req, res, next) => {
         })
 }
 exports.card_get_all = (req, res, next) => {
-    let params = {};
-    if(req.userData.role === 'user'){
-        params.published = 1,
-        params.status = 1
-    }
-    Card.find(params)
+    Card.find()
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
         .populate('contributor')

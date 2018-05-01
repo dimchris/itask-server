@@ -13,7 +13,7 @@ var card_get_all = cardCtrl.card_get_all
 var card_update = cardCtrl.card_update
 
 router.post('/', check_auth, card_add)
-router.get('/', check_auth, card_get_all)
+router.get('/',  card_get_all)
 router.get('/:cardId', card_get)
 router.put('/:cardId', check_auth, card_update)
 router.delete('/:cardId', check_auth, card_remove)
