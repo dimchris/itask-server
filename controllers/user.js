@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 const Image = require("../models/Image")
+const Card = require("../models/Card")
+const Task = require("../models/Task")
 
 exports.user_get_all = (req, res, next) => {
     User.find()
@@ -256,7 +258,7 @@ exports.user_get_images = (req, res, next) => {
 exports.user_add_image = (req, res, next) => {
     User.findById(req.userData.userId)
         .then((user) => {
-            if (user.images.indexOf(req.body.imageId)<0) {
+            if (user.images.indexOf(req.body.imageId) < 0) {
                 console.log(user.images);
                 user.images.push(req.body.imageId)
                 user.save().then((result) => {
@@ -271,11 +273,11 @@ exports.user_add_image = (req, res, next) => {
                     )
                 }
                 )
-                .catch(error => {
-                    res.status(403).json({error})
-                })
-            }else{
-                res.status(200).json(                       {
+                    .catch(error => {
+                        res.status(403).json({ error })
+                    })
+            } else {
+                res.status(200).json({
                     message: 'Image added',
                     request: {
                         type: 'GET',
@@ -286,5 +288,102 @@ exports.user_add_image = (req, res, next) => {
         })
 }
 
+exports.user_get_images = (req, res, next) => {
+    Image.find()
+        .where({ contributor: req.params.userId })
+        .skip(parseInt(req.query.skip) || 0)
+        .limit(parseInt(req.query.limit) || 0)
+        .populate('contributor')
+        .exec()
+        .then((images) => {
+            return res.status(200).json(
+                {
+                    count: images.length,
+                    images: images.map((image) => {
+                        return {
+                            id: image._id,
+                            description: image.description,
+                            contributor: {
+                                id: image.contributor.id,
+                                name: image.contributor.id
+                            },
+                            url: {
+                                type: 'GET',
+                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + image._id
+                            }
+                        }
+                    })
+                }
+            );
+        })
+}
+
+exports.user_get_cards = (req, res, next) => {
+    Card.find()
+        .where({contributor: req.params.userId})
+        .skip(parseInt(req.query.skip) || 0)
+        .limit(parseInt(req.query.limit) || 0)
+        .populate('contributor')
+        .exec()
+        .then((cards) => {
+            return res.status(200).json(
+                {
+                    count: cards.length,
+                    cards: cards.map((card) => {
+                        return {
+                            id: card._id,
+                            description: card.description,
+                            contributor: {
+                                id: card.contributor.id,
+                                name: card.contributor.id
+                            },
+                            url: {
+                                type: 'GET',
+                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + card._id
+                            }
+                        }
+                    })
+                }
+            );
+        })
+}
+exports.user_get_tasks = (req, res, next) => {
+    Task.find()
+    .where({contributor: req.params.userId})
+    .skip(parseInt(req.query.skip) || 0)
+    .limit(parseInt(req.query.limit) || 0)
+    .select('id name description age level image contributor')
+    .populate('contributor')
+    .populate({
+        path: 'image',
+        select: '_id data'
+    })
+    .exec()
+    .then((tasks) => {
+        return res.status(200).json(
+            {
+                count: tasks.length,
+                tasks: tasks.map((task) => {
+                    return {
+                        id: task._id,
+                        name: task.name,
+                        description: task.description,
+                        age: task.age,
+                        level: task.level,
+                        image: task.image,
+                        contributor: {
+                            id: task.contributor.id,
+                            name: task.contributor.fullname
+                        },
+                        url: {
+                            type: 'GET',
+                            url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + task._id
+                        }
+                    }
+                })
+            }
+        );
+    })
+}
 
 

@@ -44,12 +44,7 @@ exports.image_get = (req, res, next) => {
         })
 }
 exports.image_get_all = (req, res, next) => {
-    let params = {};
-    if(req.userData.role === 'user'){
-        params.published = 1,
-        params.status = 1
-    }
-    Image.find(params)
+    Image.find()
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
         .populate('contributor')

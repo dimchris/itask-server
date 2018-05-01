@@ -8,6 +8,8 @@ var user_get_all = userCtrl.user_get_all
 var user_get = userCtrl.user_get
 var user_update = userCtrl.user_update
 var user_get_images = userCtrl.user_get_images
+var user_get_cards = userCtrl.user_get_cards
+var user_get_tasks = userCtrl.user_get_tasks
 var user_add_image = userCtrl.user_add_image
 var check_auth = require('../middleware/check-auth')
 var check_admin = require('../middleware/check-admin')
@@ -24,8 +26,13 @@ router.put('/:userId', check_auth, user_update)
 router.delete('/:userId',check_auth, check_admin, user_delete)
 
 //user images
-router.get('/:userId/images', check_auth, user_get_images)
-router.post('/:userId/images', check_auth, user_add_image)
+router.get('/:userId/images',  user_get_images)
+
+//user cards
+router.get('/:userId/cards',  user_get_cards)
+
+//user tasks
+router.get('/:userId/tasks',  user_get_tasks)
 
 
 module.exports = router;
