@@ -309,7 +309,7 @@ exports.user_get_images = (req, res, next) => {
                             },
                             url: {
                                 type: 'GET',
-                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + image._id
+                                url: req.protocol + '://' + req.get('host') + 'images' + '/' + image._id
                             }
                         }
                     })
@@ -339,7 +339,7 @@ exports.user_get_cards = (req, res, next) => {
                             },
                             url: {
                                 type: 'GET',
-                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + card._id
+                                url: req.protocol + '://' + req.get('host') + 'cards' + '/' + card._id
                             }
                         }
                     })
@@ -377,7 +377,7 @@ exports.user_get_tasks = (req, res, next) => {
                         },
                         url: {
                             type: 'GET',
-                            url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + task._id
+                            url: req.protocol + '://' + req.get('host') + 'tasks' + '/' + task._id
                         }
                     }
                 })
