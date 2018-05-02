@@ -6,8 +6,9 @@ const User = require("../models/User");
 const Image = require("../models/Image")
 
 exports.image_add = (req, res, next) => {
+    let _id = new mongoose.Types.ObjectId()
     image = new Image({
-        _id: new mongoose.Types.ObjectId(),
+        _id,
         name: req.body.name,
         description: req.body.description,
         data: req.body.data,
@@ -18,6 +19,7 @@ exports.image_add = (req, res, next) => {
         return res.status(200).json(
             {
                 message: 'Image added',
+                id: _id,
                 request: {
                     type: 'GET',
                     url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + image._id
