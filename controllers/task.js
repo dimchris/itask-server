@@ -71,7 +71,7 @@ exports.task_get_all = (req, res, next) => {
     Task.find(params)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
-        .select('id name description age level image contributor')
+        .select('_id name description age level image contributor')
         .populate('contributor')
         .populate({
             path: 'image',
@@ -84,7 +84,7 @@ exports.task_get_all = (req, res, next) => {
                     count: tasks.length,
                     tasks: tasks.map((task) => {
                         return {
-                            id: task._id,
+                            _id: task._id,
                             name: task.name,
                             description: task.description,
                             age: task.age,
