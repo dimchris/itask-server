@@ -94,8 +94,8 @@ exports.task_get_all = (req, res, next) => {
                                 id: task.contributor.id,
                                 name: task.contributor.fullname
                             },
-                            createdAt,
-                            updatedAt,
+                            createdAt: task.createdAt,
+                            updatedAt: task.createdAt,
                             url: {
                                 type: 'GET',
                                 url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + task._id
