@@ -11,6 +11,7 @@ exports.task_add = (req, res, next) => {
         _id,
         name: req.body.name,
         description: req.body.description,
+        image: req.body.image,
         cards: req.body.cards,
         contributor: req.userData.userId,
         age: req.body.age,
