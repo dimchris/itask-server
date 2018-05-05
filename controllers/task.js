@@ -13,6 +13,8 @@ exports.task_add = (req, res, next) => {
         description: req.body.description,
         cards: req.body.cards,
         contributor: req.userData.userId,
+        age: request.body.age,
+        level: request.body.level,
         tags: req.body.tags
     })
     task.save().then((result) => {
