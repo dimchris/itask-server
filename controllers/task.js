@@ -77,7 +77,7 @@ exports.task_get_all = (req, res, next) => {
         .populate('contributor')
         .populate({
             path: 'image',
-            select: '_id data'
+            select: '_id name description data'
         })
         .exec()
         .then((tasks) => {
