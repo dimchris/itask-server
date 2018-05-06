@@ -148,15 +148,15 @@ exports.task_update = (req, res, next) => {
 }
 
 exports.task_remove = (req, res, next) => {
-    Task.findById(req.params.cardId)
+    Task.findById(req.params.taskId)
         .exec()
         .then((task) => {
             if (task.contributor == req.userData.userId) {
-                Task.findByIdAndRemove(req.params.cardId)
+                Task.findByIdAndRemove(req.params.taskId)
                     .exec()
                     .then(() => {
                         return res.status(200).json({
-                            message: 'Card successfully removed.'
+                            message: 'Task successfully removed.'
                         })
                     })
                     .catch(error => {
