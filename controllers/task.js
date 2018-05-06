@@ -68,13 +68,24 @@ exports.task_get = (req, res, next) => {
 exports.task_get_all = (req, res, next) => {
     let query = {}
     if (req.query.name) query.name = {
-        name : {
             '$regex' : req.query.name
         }
+    if (req.query.age) {
+        let age = req.query.age.split(',')        
+        query.age = {
+            $gte : parseInt(age[0]),
+            $lte: parseInt(age[1])
+        }
+        
     }
-    if (req.query.age) query.age = req.query.age
-    if (req.query.level) query.level = req.query.level
-    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
+    console.log(query.age);
+    if (req.query.level) {
+        let level = req.query.level.split(',')
+        query.level = {
+            $gte : level[0],
+            $lte: level[1]
+        }
+    }    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
