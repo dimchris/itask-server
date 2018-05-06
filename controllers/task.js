@@ -66,12 +66,11 @@ exports.task_get = (req, res, next) => {
         })
 }
 exports.task_get_all = (req, res, next) => {
-    let params = {};
-    // if(req.userData.role === 'user'){
-    //     params.published = 1,
-    //     params.status = 1
-    // }
-    Task.find(params)
+    let query = {}
+    if (req.query.age) query.age = req.query.age
+    if (req.query.level) query.level = req.query.level
+    if (req.query.tags) query.tags = { $in: req.query.tags }
+    Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
         .select('_id name description age level image contributor createdAt updatedAt')
