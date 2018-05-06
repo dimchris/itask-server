@@ -69,7 +69,7 @@ exports.task_get_all = (req, res, next) => {
     let query = {}
     if (req.query.age) query.age = req.query.age
     if (req.query.level) query.level = req.query.level
-    if (req.query.tags) query.tags = { $in: req.query.tags }
+    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
