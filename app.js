@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('config')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -12,6 +13,7 @@ var cards = require('./routes/cards');
 var tasks = require('./routes/tasks');
 
 var app = express();
+
 
 //set cross origin
 app.all('*', function(req, res, next) {
@@ -28,7 +30,11 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+//don't show the log when it is test
+if(config.util.getEnv('NODE_ENV') !== 'test') {
+  //use morgan to log at command line
+  app.use(logger('dev')); //'combined' outputs the Apache style LOGs
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

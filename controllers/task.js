@@ -137,7 +137,7 @@ exports.task_update = (req, res, next) => {
         .then((task) => {
             return res.status(200).json(
                 {
-                    message: "Card Updated",
+                    message: "Task Updated",
                     request: {
                         type: 'GET',
                         url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.taskId

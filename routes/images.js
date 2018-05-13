@@ -12,7 +12,7 @@ var image_delete = imageCtrl.image_delete
 var image_get_all = imageCtrl.image_get_all
 
 router.post('/', check_auth, image_add)
-router.get('/', check_auth, image_get_all)
+router.get('/',  image_get_all)
 router.get('/:imageId', image_get)
 
 module.exports = router;

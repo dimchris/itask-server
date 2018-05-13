@@ -5,8 +5,11 @@
 // or   var uri = process.env.MONGO_URL
 
 var url = require('url')
+let config = require('config'); //we load the db location from the JSON files
 
-var uri = 'mongodb://dimchris:882ltCEVKgPZ5UNn@itask-rest-server-shard-00-00-clebk.mongodb.net:27017,itask-rest-server-shard-00-01-clebk.mongodb.net:27017,itask-rest-server-shard-00-02-clebk.mongodb.net:27017/itask?ssl=true&replicaSet=itask-rest-server-shard-0&authSource=admin';
+
+var uri = config.DBHost
+
 if (!uri) {
   throw new Error(
     '\033[31mYou need to provide the connection string. ' +

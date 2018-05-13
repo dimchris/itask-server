@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "start": "SET NODE_ENV=dev && node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "test": "mocha --reporter spec --timeout 10000 --exit"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "~1.18.2",
+    "config": "^1.30.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
@@ -20,6 +22,11 @@
     "validator": "^9.4.1"
   },
   "devDependencies": {
-    "nodemon": "^1.17.1"
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "mocha": "^5.1.1",
+    "nodemon": "^1.17.1",
+    "sinon": "^5.0.7",
+    "sinon-mongoose": "^2.1.1"
   }
 }
