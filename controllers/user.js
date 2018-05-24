@@ -348,11 +348,32 @@ exports.user_get_cards = (req, res, next) => {
         })
 }
 exports.user_get_tasks = (req, res, next) => {
-    Task.find()
-    .where({contributor: req.params.userId})
+    let query = {}
+    if (req.query.name) query.name = {
+            '$regex' : req.query.name
+        }
+    if (req.query.age) {
+        let age = req.query.age.split(',')        
+        query.age = {
+            $gte : parseInt(age[0]),
+            $lte: parseInt(age[1])
+        }
+        
+    }
+    console.log(query.age);
+    if (req.query.level) {
+        let level = req.query.level.split(',')
+        query.level = {
+            $gte : level[0],
+            $lte: level[1]
+        }
+    }
+    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
+    query.contributor = req.params.userId
+    Task.find(query)
     .skip(parseInt(req.query.skip) || 0)
     .limit(parseInt(req.query.limit) || 0)
-    .select('id name description age level image contributor')
+    .select('_id name description age level image contributor tags createdAt updatedAt')
     .populate('contributor')
     .populate({
         path: 'image',
@@ -365,7 +386,7 @@ exports.user_get_tasks = (req, res, next) => {
                 count: tasks.length,
                 tasks: tasks.map((task) => {
                     return {
-                        id: task._id,
+                        _id: task._id,
                         name: task.name,
                         description: task.description,
                         age: task.age,
@@ -375,6 +396,7 @@ exports.user_get_tasks = (req, res, next) => {
                             id: task.contributor.id,
                             name: task.contributor.fullname
                         },
+                        tags: task.tags,
                         url: {
                             type: 'GET',
                             url: req.protocol + '://' + req.get('host') + '/tasks' + '/' + task._id

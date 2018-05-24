@@ -85,11 +85,12 @@ exports.task_get_all = (req, res, next) => {
             $gte : level[0],
             $lte: level[1]
         }
-    }    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
+    }    
+    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
-        .select('_id name description age level image contributor createdAt updatedAt')
+        .select('_id name description age level image contributor tags createdAt updatedAt')
         .populate('contributor')
         .populate({
             path: 'image',
@@ -112,6 +113,7 @@ exports.task_get_all = (req, res, next) => {
                                 id: task.contributor.id,
                                 name: task.contributor.fullname
                             },
+                            tags: task.tags,
                             createdAt: task.createdAt,
                             updatedAt: task.updatedAt,
                             url: {
