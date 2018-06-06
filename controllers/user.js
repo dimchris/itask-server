@@ -74,37 +74,81 @@ exports.user_update = (req, res, next) => {
         if (req.body.fullname) {
             params.fullname = req.body.fullname
         }
+
     } else {
         if (req.body.email) {
             params.email = req.body.email
         }
+        if (req.body.password) {
+            params.password = req.body.password
+        }
     }
 
-    console.log(params);
+    // console.log(params);
 
-
-    User.update({ _id: req.params.userId }, { "$set": params })
-        .exec()
-        .then((result) => {
-            return res.status(200).json(
-                {
-                    message: "User updated",
-                    request: {
-                        type: "GET",
-                        url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.userId
+    if (!params.password) {
+        User.update({ _id: req.params.userId }, { "$set": params })
+            .exec()
+            .then((result) => {
+                return res.status(200).json(
+                    {
+                        message: "User updated",
+                        request: {
+                            type: "GET",
+                            url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.userId
+                        }
                     }
-                }
+                )
+            })
+            .catch((error) => {
+                return res.status(404).json(
+                    {
+                        error
+                    }
+                )
+            }
             )
-        })
-        .catch((error) => {
-            return res.status(404).json(
-                {
-                    error
+
+    } else {
+        if (req.body.password.length <= 8) {
+            return res.status(400).json({
+                error: "Password at least 8 characters"
+            })
+        }
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+            if (err) {
+                return res.status(500).json({
+                    error: err
+                });
+            } else {
+                req.user.password = hash
+                User.update({ _id: req.params.userId }, { "$set": params })
+                .exec()
+                .then((result) => {
+                    return res.status(200).json(
+                        {
+                            message: "User updated",
+                            request: {
+                                type: "GET",
+                                url: req.protocol + '://' + req.get('host') + req.baseUrl + '/' + req.params.userId
+                            }
+                        }
+                    )
+                })
+                .catch((error) => {
+                    return res.status(404).json(
+                        {
+                            error
+                        }
+                    )
                 }
-            )
+                )
+
+            }
         }
         )
-};
+    }
+}
 
 exports.user_delete = (req, res, next) => {
     User.remove({ _id: req.params.userId })
@@ -320,7 +364,7 @@ exports.user_get_images = (req, res, next) => {
 
 exports.user_get_cards = (req, res, next) => {
     Card.find()
-        .where({contributor: req.params.userId})
+        .where({ contributor: req.params.userId })
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
         .populate('contributor')
@@ -350,62 +394,62 @@ exports.user_get_cards = (req, res, next) => {
 exports.user_get_tasks = (req, res, next) => {
     let query = {}
     if (req.query.name) query.name = {
-            '$regex' : req.query.name
-        }
+        '$regex': req.query.name
+    }
     if (req.query.age) {
-        let age = req.query.age.split(',')        
+        let age = req.query.age.split(',')
         query.age = {
-            $gte : parseInt(age[0]),
+            $gte: parseInt(age[0]),
             $lte: parseInt(age[1])
         }
-        
+
     }
     console.log(query.age);
     if (req.query.level) {
         let level = req.query.level.split(',')
         query.level = {
-            $gte : level[0],
+            $gte: level[0],
             $lte: level[1]
         }
     }
     if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
     query.contributor = req.params.userId
     Task.find(query)
-    .skip(parseInt(req.query.skip) || 0)
-    .limit(parseInt(req.query.limit) || 0)
-    .select('_id name description age level image contributor tags createdAt updatedAt')
-    .populate('contributor')
-    .populate({
-        path: 'image',
-        select: '_id data'
-    })
-    .exec()
-    .then((tasks) => {
-        return res.status(200).json(
-            {
-                count: tasks.length,
-                tasks: tasks.map((task) => {
-                    return {
-                        _id: task._id,
-                        name: task.name,
-                        description: task.description,
-                        age: task.age,
-                        level: task.level,
-                        image: task.image,
-                        contributor: {
-                            id: task.contributor.id,
-                            name: task.contributor.fullname
-                        },
-                        tags: task.tags,
-                        url: {
-                            type: 'GET',
-                            url: req.protocol + '://' + req.get('host') + '/tasks' + '/' + task._id
+        .skip(parseInt(req.query.skip) || 0)
+        .limit(parseInt(req.query.limit) || 0)
+        .select('_id name description age level image contributor tags createdAt updatedAt')
+        .populate('contributor')
+        .populate({
+            path: 'image',
+            select: '_id data'
+        })
+        .exec()
+        .then((tasks) => {
+            return res.status(200).json(
+                {
+                    count: tasks.length,
+                    tasks: tasks.map((task) => {
+                        return {
+                            _id: task._id,
+                            name: task.name,
+                            description: task.description,
+                            age: task.age,
+                            level: task.level,
+                            image: task.image,
+                            contributor: {
+                                id: task.contributor.id,
+                                name: task.contributor.fullname
+                            },
+                            tags: task.tags,
+                            url: {
+                                type: 'GET',
+                                url: req.protocol + '://' + req.get('host') + '/tasks' + '/' + task._id
+                            }
                         }
-                    }
-                })
-            }
-        );
-    })
+                    })
+                }
+            );
+        })
 }
 
 
