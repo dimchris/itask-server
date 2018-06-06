@@ -121,7 +121,7 @@ exports.user_update = (req, res, next) => {
                     error: err
                 });
             } else {
-                req.params.password = hash
+                params.password = hash
                 User.update({ _id: req.params.userId }, { "$set": params })
                 .exec()
                 .then((result) => {
