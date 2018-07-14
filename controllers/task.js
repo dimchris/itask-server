@@ -35,7 +35,7 @@ exports.task_add = (req, res, next) => {
 
 exports.task_get = (req, res, next) => {
     Task.findById(req.params.taskId)
-        .select('_id name description age level image contributor cards createdAt updatedAt')
+        .select('_id name description age level image contributor cards tags createdAt updatedAt')
         .populate({
             path: 'cards',
             select: '_id name description image',
