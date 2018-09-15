@@ -36,7 +36,7 @@ exports.task_add = (req, res, next) => {
 
 exports.task_get = (req, res, next) => {
     Task.findById(req.params.taskId)
-        .select('_id name description age level image contributor cards published createdAt updatedAt')
+        .select('_id name description age level image contributor cards tags published createdAt updatedAt')
         .populate({
             path: 'cards',
             select: '_id name description image',
@@ -86,11 +86,12 @@ exports.task_get_all = (req, res, next) => {
             $gte : level[0],
             $lte: level[1]
         }
-    }    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
+    }    
+    if (req.query.tags) query.tags = { $in: req.query.tags.split(',') }
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
-        .select('_id name description age level image contributor published createdAt updatedAt')
+        .select('_id name description age level image contributor tags published createdAt updatedAt')
         .populate('contributor')
         .populate({
             path: 'image',
@@ -113,6 +114,7 @@ exports.task_get_all = (req, res, next) => {
                                 id: task.contributor.id,
                                 name: task.contributor.fullname
                             },
+                            tags: task.tags,
                             published: task.published,
                             createdAt: task.createdAt,
                             updatedAt: task.updatedAt,
