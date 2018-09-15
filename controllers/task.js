@@ -16,7 +16,8 @@ exports.task_add = (req, res, next) => {
         contributor: req.userData.userId,
         age: req.body.age,
         level: req.body.level,
-        tags: req.body.tags
+        tags: req.body.tags,
+        published: req.body.published
     })
     task.save().then((result) => {
         return res.status(200).json(
@@ -35,7 +36,7 @@ exports.task_add = (req, res, next) => {
 
 exports.task_get = (req, res, next) => {
     Task.findById(req.params.taskId)
-        .select('_id name description age level image contributor cards createdAt updatedAt')
+        .select('_id name description age level image contributor cards published createdAt updatedAt')
         .populate({
             path: 'cards',
             select: '_id name description image',
@@ -78,7 +79,7 @@ exports.task_get_all = (req, res, next) => {
         }
         
     }
-    console.log(query.age);
+    // console.log(query.age);
     if (req.query.level) {
         let level = req.query.level.split(',')
         query.level = {
@@ -89,7 +90,7 @@ exports.task_get_all = (req, res, next) => {
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
-        .select('_id name description age level image contributor createdAt updatedAt')
+        .select('_id name description age level image contributor published createdAt updatedAt')
         .populate('contributor')
         .populate({
             path: 'image',
@@ -112,6 +113,7 @@ exports.task_get_all = (req, res, next) => {
                                 id: task.contributor.id,
                                 name: task.contributor.fullname
                             },
+                            published: task.published,
                             createdAt: task.createdAt,
                             updatedAt: task.updatedAt,
                             url: {
