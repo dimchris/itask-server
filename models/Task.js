@@ -16,7 +16,7 @@ var newSchema = new Schema({
     { type: Schema.Types.ObjectId, ref:'Card' }
   ],
   'contributor': { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  'published': {type: Number, default: '1'},
+  'published': {type: Number, default: '0'},
   'status': {type:Number, default: '1'},
   'tags': [{type: String}],
   'createdAt': { type: Date, default: Date.now },

@@ -417,7 +417,7 @@ exports.user_get_tasks = (req, res, next) => {
     Task.find(query)
         .skip(parseInt(req.query.skip) || 0)
         .limit(parseInt(req.query.limit) || 0)
-        .select('_id name description age level image contributor tags createdAt updatedAt')
+        .select('_id name description age level image contributor tags published createdAt updatedAt')
         .populate('contributor')
         .populate({
             path: 'image',
@@ -441,6 +441,7 @@ exports.user_get_tasks = (req, res, next) => {
                                 name: task.contributor.fullname
                             },
                             tags: task.tags,
+                            published:task.published,
                             url: {
                                 type: 'GET',
                                 url: req.protocol + '://' + req.get('host') + '/tasks' + '/' + task._id
