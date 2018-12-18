@@ -16,11 +16,11 @@ var app = express();
 
 
 //set cross origin
-app.all('*', function(req, res, next) {
+app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
   next();
 });
 
@@ -31,12 +31,14 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 //don't show the log when it is test
-if(config.util.getEnv('NODE_ENV') !== 'test') {
+if (config.util.getEnv('NODE_ENV') !== 'test') {
   //use morgan to log at command line
   app.use(logger('dev')); //'combined' outputs the Apache style LOGs
 }
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,14 +49,14 @@ app.use('/cards', cards);
 app.use('/tasks', tasks);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
